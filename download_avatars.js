@@ -13,7 +13,7 @@ function getRepoContributors(repoOwner, repoName, cb) {
       headers: {
         'User-Agent': 'request',
         // authorizaion header asking for key secret.GITHUB_TOKEN accesses the value direct from secret.js
-        'Authorization' : secret
+        'Authorization' : 'Bearer ' + secret.GITHUB_TOKEN
       }
       
     };
@@ -21,15 +21,23 @@ function getRepoContributors(repoOwner, repoName, cb) {
     
   
     request(options, function(err, res, body) {
+      let data = JSON.parse(body);
 
+      // console.log(data)
       // console.log('type of body: ' +  body)
-      
-      cb(err, JSON.parse(body));
+    
+
+      cb(err, data);
     });
   }
 getRepoContributors("jquery", "jquery", function(err, result) {
     console.log(result)
-    // downloadImageByURL()
+    result.forEach (function(user) {
+      console.log("Avatar URL for " + user.login + ": " + user.avatar_url);
+      var path = './avatars/' + user.login + '.jpg';
+      downloadImageByURL(user.avatar_url, path)
+    });
+    
     // console.log("Result:", result);
   });
 
@@ -46,7 +54,7 @@ getRepoContributors("jquery", "jquery", function(err, result) {
     .on('end', function(end){
       console.log('ended here')
     })
-    .pipe(fs.createWriteStream('./avatar_http.jpg'));
+    .pipe(fs.createWriteStream(filePath));
   }
   
-  downloadImageByURL("https://avatars2.githubusercontent.com/u/2741?v=3&s=466", "avatars/kvirani.jpg")
+  // downloadImageByURL(avatar_url)
