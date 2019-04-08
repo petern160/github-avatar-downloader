@@ -1,5 +1,9 @@
 var request = require('request');
-var secret = require('secret.js')
+
+// gets secret.js 'FILE NAME'
+var secret = require('./secret.js');
+// require file system
+var fs = require('fs')
 
 // console.log('Welcome to the GitHub Avatar Downloader!');
 
@@ -8,18 +12,40 @@ function getRepoContributors(repoOwner, repoName, cb) {
       url: "https://api.github.com/repos/" + repoOwner + "/" + repoName + "/contributors",
       headers: {
         'User-Agent': 'request',
-        'Authorization' : 'Bearer ' + secret.GITHUB_TOKEN
+        // authorizaion header asking for key secret.GITHUB_TOKEN accesses the value direct from secret.js
+        'Authorization' : secret
       }
       
     };
+
+    
   
     request(options, function(err, res, body) {
-      cb(err, body);
+
+      // console.log('type of body: ' +  body)
+      
+      cb(err, JSON.parse(body));
     });
   }
-getRepoContributors("lighthouse-labs", "assessment-exam-student", function(err, result) {
-    console.log("Errors:", err);
-    console.log("Result:", result);
+getRepoContributors("jquery", "jquery", function(err, result) {
+    console.log(result)
+    // downloadImageByURL()
+    // console.log("Result:", result);
   });
 
+  function downloadImageByURL(url, filePath) {
+    requests.get(url)
+    .on('error', function(error){
+      throw err;
+
+    })
+    .on('response', function(response){
+      console.log('the response status code is: ' + response.statusCode);
+    })
+
+    .on('end', function(end){
+      console.log('ended here')
+    })
+    .pipe(fs.createWriteSystem('./avatar_http.jpg'));
+  }
   
