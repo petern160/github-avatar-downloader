@@ -1,4 +1,8 @@
+
+# ignores this file completely make sure to add and commit this file first
 secret.js
+#ignores modules
+node_modules/
 
 # Logs
 logs
