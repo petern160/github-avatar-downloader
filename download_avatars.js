@@ -29,32 +29,48 @@ function getRepoContributors(repoOwner, repoName, cb) {
 
       cb(err, data);
     });
-  }
-getRepoContributors("jquery", "jquery", function(err, result) {
-    console.log(result)
-    result.forEach (function(user) {
-      console.log("Avatar URL for " + user.login + ": " + user.avatar_url);
-      var path = './avatars/' + user.login + '.jpg';
-      downloadImageByURL(user.avatar_url, path)
+} //function getRepoContributors ends here.
+
+function downloadImageByURL(url, filePath) {
+  request.get(url)
+  .on('error', function(error){
+    throw err;
+
+  })
+  .on('response', function(response){
+    console.log('the response status code is: ' + response.statusCode);
+  })
+
+  .on('end', function(end){
+    console.log('ended here')
+  })
+  .pipe(fs.createWriteStream(filePath));
+}
+
+//main program starts here
+
+var repoOwner = process.argv[2];
+var repo = process.argv[3];
+
+  if (repoOwner === undefined || repo === undefined) {
+    console.log("Please provide RepoOwner and Repo as command line arguements");
+    return;
+  } else{
+    getRepoContributors("jquery", "jquery", function(err, result) {
+      console.log(result)
+      result.forEach (function(user) {
+        console.log("Avatar URL for " + user.login + ": " + user.avatar_url);
+        var path = './avatars/' + user.login + '.jpg';
+        downloadImageByURL(user.avatar_url, path)
+      });
+      
+      // console.log("Result:", result);
     });
-    
-    // console.log("Result:", result);
-  });
 
-  function downloadImageByURL(url, filePath) {
-    request.get(url)
-    .on('error', function(error){
-      throw err;
-
-    })
-    .on('response', function(response){
-      console.log('the response status code is: ' + response.statusCode);
-    })
-
-    .on('end', function(end){
-      console.log('ended here')
-    })
-    .pipe(fs.createWriteStream(filePath));
   }
+ 
+
+ 
   
-  // downloadImageByURL(avatar_url)
+
+  
